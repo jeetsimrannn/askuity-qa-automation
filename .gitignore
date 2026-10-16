@@ -147,3 +147,9 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+allure-results/
+allure-report/
+screenshots/
+logs/
+.DS_Store

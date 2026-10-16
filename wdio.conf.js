@@ -1,27 +1,26 @@
-import fs from 'node:fs';
-import path from 'node:path';
+const fs = require('fs');
+const path = require('path');
 
-// Run headless with: HEADLESS=true npm test
-const isHeadless = process.env.HEADLESS === 'true';
-const SCREENSHOT_DIR = './screenshots';
+// Run headless with: npm run test:headless
+const chromeArgs = ['--window-size=1440,900'];
+if (process.env.HEADLESS === 'true') {
+    chromeArgs.push('--headless=new');
+}
 
-export const config = {
+exports.config = {
     runner: 'local',
 
     // Specs
     specs: ['./src/specs/**/*.js'],
     exclude: [],
 
-    // Parallel execution: each spec file runs in its own worker and browser session
+    // Parallel execution: each spec file runs in its own browser session
     maxInstances: 4,
 
     capabilities: [{
         browserName: 'chrome',
         'goog:chromeOptions': {
-            args: [
-                '--window-size=1440,900',
-                ...(isHeadless ? ['--headless=new', '--disable-gpu'] : []),
-            ],
+            args: chromeArgs,
         },
     }],
 
@@ -42,19 +41,16 @@ export const config = {
         timeout: 60000,
     },
 
-    // Hooks
-    /**
-     * Save a screenshot for every failed test, named after the suite, test and time.
-     */
+    // Save a screenshot for every failed test
     afterTest: async function (test, context, { passed }) {
         if (passed) {
             return;
         }
-        fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
-        const name = `${test.parent} ${test.title}`
-            .replace(/[^a-z0-9]+/gi, '_')
-            .slice(0, 100);
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        await browser.saveScreenshot(path.join(SCREENSHOT_DIR, `${name}_${timestamp}.png`));
+        const folder = './screenshots';
+        if (!fs.existsSync(folder)) {
+            fs.mkdirSync(folder);
+        }
+        const fileName = test.title.replace(/[^a-z0-9]+/gi, '_') + '_' + Date.now() + '.png';
+        await browser.saveScreenshot(path.join(folder, fileName));
     },
 };

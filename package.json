@@ -1,6 +1,5 @@
 {
   "name": "askuity-qa-automation",
-  "type": "module",
   "devDependencies": {
     "@wdio/cli": "^10.0.2",
     "@wdio/local-runner": "^10.0.2",

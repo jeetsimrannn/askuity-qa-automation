@@ -8,6 +8,8 @@
     "@wdio/spec-reporter": "^10.0.1"
   },
   "scripts": {
-    "wdio": "wdio run ./wdio.conf.js"
+    "wdio": "wdio run ./wdio.conf.js",
+    "test": "wdio run ./wdio.conf.js",
+    "test:headless": "HEADLESS=true wdio run ./wdio.conf.js"
   }
 }
